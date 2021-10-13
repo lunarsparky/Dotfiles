@@ -1,0 +1,60 @@
+# Variables
+# export PATH=$HOME/bin:$PATH
+HISTFILE=~/.histfile
+HISTSIZE=10000
+SAVEHIST=10000
+
+# Alias
+## ls
+alias l='ls -lh'
+alias ll='ls -lah'
+alias la='ls -A'
+alias lm='ls -m'
+alias lr='ls -R'
+alias lg='ls -l --group-directories-first'
+
+## git
+alias gcl='git clone --depth 1'
+alias gi='git init'
+alias ga='git add'
+alias gc='git commit -m'
+alias gp='git push origin master'
+
+# Options
+setopt autocd extendedglob
+unsetopt beep
+bindkey -v
+
+# Private variables that not tracked in git, as well as any other fancy
+if [ ! -f $HOME/.environment.zsh ]; then
+    print -P "No '.environment.zsh found, creating..."
+    print -P "Remember to add any private variables here that are not to be tracked in git."
+    command touch $HOME/.environment.zsh
+fi
+
+source "$HOME/.environment.zsh"
+
+# Zinit initialise
+if [ ! -f $HOME/.zinit/bin/zinit.zsh ]; then
+    print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.zinit" && command chmod g-rwX "$HOME/.zinit"
+    command git clone https://github.com/zdharma/zinit "$HOME/.zinit/bin" && \
+        print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
+        print -P "%F{160}▓▒░ The clone has failed.%f%b"
+fi
+
+source "$HOME/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Zinit Plugins
+zinit light-mode for \
+    spaceship-prompt/spaceship-prompt \
+    zsh-users/zsh-autosuggestions \
+    zdharma/fast-syntax-highlighting
+
+# Gnome Keyring
+#if [ -n "$DESKTOP_SESSION" ];then
+#    eval $(gnome-keyring-daemon --start)
+#    export SSH_AUTH_SOCK
+#fi
